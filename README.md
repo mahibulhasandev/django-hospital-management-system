@@ -1,49 +1,45 @@
 # Hospital Management System
 
-A web-based Hospital Management System built with Django to simplify hospital operations and manage healthcare services.
+A web-based Hospital Management System built with Django to organize hospital operations and healthcare services.
 
-## Overview
+## Planned Modules
 
-This project aims to develop a centralized system for managing hospital activities, including patients, doctors, nurses, medical departments, appointments, pharmacy, diagnostics, and billing.
+- User authentication and role management
+- Patient management
+- Doctor and nurse management
+- Department management
+- Appointment management
 
-## Planned Features
-
-- User Authentication & Role Management
-- Patient Management
-- Doctor & Nurse Management
-- Department Management
-- Appointment Management
-- Prescription Management
-- Admission & Discharge
-- Laboratory & Diagnostic Management
-- Pharmacy Management
-- Billing & Payment
-- Dashboard & Reports
+Additional modules such as consultations, prescriptions, admissions, laboratory, pharmacy, billing, inventory, and reports will be added in later development phases.
 
 ## Tech Stack
 
-- **Backend:** Python, Django
-- **Frontend:** Django Templates, Tailwind CSS
-- **API:** Django REST Framework
-- **Database:** PostgreSQL
-- **Version Control:** Git & GitHub
+- Python and Django
+- Django Templates
+- Tailwind CSS (frontend integration planned)
+- Django REST Framework (API endpoints when needed)
+- SQLite for initial local development; PostgreSQL planned for production
 
 ## Architecture
 
-Modular Monolithic Architecture
-
-The project will be organized into separate Django apps based on individual features and responsibilities.
+Modular Monolithic Architecture. Each business area is organized as a separate Django app under `apps/`.
 
 ## Project Status
 
-🚧 Currently in the planning and development stage.
+🚧 Initial project scaffold. Features are not implemented yet.
 
-## Learning Goals
+## Getting Started
 
-This project is being developed to practice Django, database design, backend development, frontend integration, REST APIs, and real-world software architecture.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+python manage.py check
+python manage.py migrate
+python manage.py runserver
+```
 
 ## Author
 
-**Mahibul Hasan**
-
-- GitHub: [@mahibulhasandev](https://github.com/mahibulhasandev)
+Mahibul Hasan — [@mahibulhasandev](https://github.com/mahibulhasandev)
