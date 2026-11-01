@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import LoginForm
+from django.core.exceptions import PermissionDenied
+
 
 
 def login_view(request):
@@ -44,17 +46,20 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
 
-    role = request.user.role
-
     dashboards = {
         "HOSPITAL_ADMIN": "dashboards/admin.html",
         "DOCTOR": "dashboards/doctor.html",
         "NURSE": "dashboards/nurse.html",
-        "PATIENT": "dashboards/patient.html",
         "RECEPTIONIST": "dashboards/receptionist.html",
         "STAFF": "dashboards/staff.html",
+        "PATIENT": "dashboards/patient.html",
+        "LABORATORY_TECHNICIAN": "dashboards/laboratory.html",
+        "PHARMACIST": "dashboards/pharmacy.html",
     }
 
-    template = dashboards.get(role, "dashboards/admin.html")
+    template = dashboards.get(request.user.role)
+
+    if not template:
+        raise PermissionDenied("You don't have dashboard access.")
 
     return render(request, template)

@@ -14,6 +14,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         RECEPTIONIST = "RECEPTIONIST", "Receptionist"
         STAFF = "STAFF", "Staff"
         PATIENT = "PATIENT", "Patient"
+        LABORATORY_TECHNICIAN = "LABORATORY_TECHNICIAN", "Laboratory Technician"
+        PHARMACIST = "PHARMACIST", "Pharmacist"
         
     email = models.EmailField(
         max_length=254,
@@ -31,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     full_name = models.CharField(max_length=150)
 
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.PATIENT)
+    role = models.CharField(max_length=30, choices=Role.choices, default=Role.PATIENT)
     
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
