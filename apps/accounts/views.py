@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import LoginForm
 from django.core.exceptions import PermissionDenied
-
+from .forms import LoginForm, PatientRegistrationForm
 
 
 def login_view(request):
@@ -36,12 +36,14 @@ def login_view(request):
 
     return render(request, "accounts/login.html", {"form": form})
 
+
 def logout_view(request):
     if request.method == "POST":
         logout(request)
         return render(request, "accounts/logout.html")
 
     return redirect("login")
+
 
 @login_required
 def dashboard_view(request):
@@ -63,3 +65,31 @@ def dashboard_view(request):
         raise PermissionDenied("You don't have dashboard access.")
 
     return render(request, template)
+
+
+def register_view(request):
+
+    if request.user.is_authenticated:
+        return redirect("accounts:dashboard")
+
+    if request.method == "POST":
+        form = PatientRegistrationForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Your account has been created successfully. Please login."
+            )
+
+            return redirect("accounts:login")
+
+    else:
+        form = PatientRegistrationForm()
+
+    return render(
+        request,
+        "accounts/register.html",
+        {"form": form}
+    )
