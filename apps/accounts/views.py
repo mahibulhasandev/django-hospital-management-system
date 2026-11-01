@@ -6,7 +6,7 @@ from .forms import LoginForm
 # Add views for this module here.
 
 
-def login_vew(request):
+def login_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
     
