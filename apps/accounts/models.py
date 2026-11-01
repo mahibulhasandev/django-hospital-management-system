@@ -15,8 +15,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         STAFF = "STAFF", "Staff"
         PATIENT = "PATIENT", "Patient"
         
-    email = models.EmailField(unique=True, null=True, blank=True)
-    email = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    email = models.EmailField(
+        max_length=254,
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+    phone = models.CharField(
+        max_length=20,
+        unique=True,
+        null=True,
+        blank=True
+    )
     
     full_name = models.CharField(max_length=150)
 
@@ -30,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["full_name"]
 
 
     def __str__(self):

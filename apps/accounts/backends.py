@@ -12,7 +12,7 @@ class EmailOrPhoneBackend(ModelBackend):
         User = get_user_model()
         user = User.objects.filter(Q(email__iexact=identifier) | Q(phone=identifier)).first()
 
-        if user and user.check_password(password) and self.user_can_authenticate(user)
+        if user and user.check_password(password) and self.user_can_authenticate(user):
             return user
 
 
