@@ -1,0 +1,7 @@
+{% extends "base/base.html" %}
+{% block content %}
+<div class="dashboard-layout">
+    {% include "components/sidebar.html" %}
+    <main>{% include "components/navbar.html" %}{% block dashboard_content %}{% endblock %}</main>
+</div>
+{% endblock %}
