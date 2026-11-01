@@ -8,7 +8,7 @@ from .forms import LoginForm
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("dashboard")
+        return redirect("accounts:dashboard")
 
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -25,7 +25,7 @@ def login_view(request):
 
             if user is not None:
                 login(request, user)
-                return redirect("dashboard")
+                return redirect("accounts:dashboard")
 
             messages.error(request, "Invalid email/phone or password.")
 
@@ -43,6 +43,18 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    return HttpResponse(
-        f"Welcome to Hospital Management System, {request.user.full_name}!"
-    )
+
+    role = request.user.role
+
+    dashboards = {
+        "HOSPITAL_ADMIN": "dashboards/admin.html",
+        "DOCTOR": "dashboards/doctor.html",
+        "NURSE": "dashboards/nurse.html",
+        "PATIENT": "dashboards/patient.html",
+        "RECEPTIONIST": "dashboards/receptionist.html",
+        "STAFF": "dashboards/staff.html",
+    }
+
+    template = dashboards.get(role, "dashboards/admin.html")
+
+    return render(request, template)
