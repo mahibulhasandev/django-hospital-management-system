@@ -1,49 +1,114 @@
 
 {% extends "base/dashboard_base.html" %}
 
-{% block title %}Edit Profile{% endblock %}
-
+{% block title %}Edit Patient Profile{% endblock %}
+{% block sidebar %}
+    {% include "patients/sidebar.html" %}
+{% endblock sidebar %}
 {% block content %}
 
-<div class="max-w-3xl mx-auto">
+<div class="max-w-4xl mx-auto space-y-6">
 
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-slate-800">Edit Profile</h1>
-        <p class="text-slate-500 mt-1">Update your personal information</p>
+    <!-- Header -->
+    <div>
+        <h1 class="text-2xl font-bold text-slate-800">
+            Edit Profile
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">
+            Update your personal and emergency contact information.
+        </p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
 
-        <form method="POST" enctype="multipart/form-data" class="space-y-5">
+        <form method="POST"
+              enctype="multipart/form-data"
+              class="space-y-6">
 
             {% csrf_token %}
 
-            {% for field in form %}
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        {{ field.label }}
-                    </label>
-
-                    {{ field }}
-
-                    {% if field.help_text %}
-                        <p class="text-xs text-slate-500 mt-1">
-                            {{ field.help_text }}
-                        </p>
-                    {% endif %}
-
-                    {% for error in field.errors %}
-                        <p class="text-sm text-red-600 mt-1">{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-
             {% if form.non_field_errors %}
-                <div class="text-sm text-red-600">
+                <div class="bg-red-50 text-red-600 p-4 rounded-xl">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
 
+            <!-- Personal Information -->
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-5">
+                    Personal Information
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    {% for field in form %}
+                        {% if field.name != "emergency_contact_name" and field.name != "emergency_contact_phone" %}
+
+                            <div class="{% if field.name == 'address' or field.name == 'profile_picture' %}md:col-span-2{% endif %}">
+
+                                <label for="{{ field.id_for_label }}"
+                                       class="block text-sm font-semibold text-slate-700 mb-2">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <p class="text-xs text-slate-500 mt-1">
+                                        {{ field.help_text }}
+                                    </p>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <p class="text-sm text-red-600 mt-1">
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <div class="border-t border-slate-200"></div>
+
+            <!-- Emergency Contact -->
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-5">
+                    Emergency Contact
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    {% for field in form %}
+                        {% if field.name == "emergency_contact_name" or field.name == "emergency_contact_phone" %}
+
+                            <div>
+                                <label for="{{ field.id_for_label }}"
+                                       class="block text-sm font-semibold text-slate-700 mb-2">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% for error in field.errors %}
+                                    <p class="text-sm text-red-600 mt-1">
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <!-- Buttons -->
             <div class="flex flex-col sm:flex-row gap-3 pt-4">
 
                 <button type="submit"
@@ -61,6 +126,7 @@
         </form>
 
     </div>
+
 </div>
 
 {% endblock %}
