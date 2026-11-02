@@ -393,6 +393,9 @@
   .h-72 {
     height: calc(var(--spacing) * 72);
   }
+  .h-full {
+    height: 100%;
+  }
   .min-h-screen {
     min-height: 100vh;
   }
@@ -459,6 +462,9 @@
   .translate-y-2 {
     --tw-translate-y: calc(var(--spacing) * 2);
     translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .rotate-180 {
+    rotate: 180deg;
   }
   .resize {
     resize: both;
@@ -750,6 +756,9 @@
   }
   .p-1\.5 {
     padding: calc(var(--spacing) * 1.5);
+  }
+  .p-2 {
+    padding: calc(var(--spacing) * 2);
   }
   .p-3 {
     padding: calc(var(--spacing) * 3);
