@@ -5,7 +5,7 @@ from django.db import transaction
 
 from .models import DoctorProfile
 from apps.departments.models import Department
-
+from .models import DoctorProfile, DoctorSchedule
 
 User = get_user_model()
 
@@ -113,3 +113,69 @@ class DoctorUpdateForm(forms.ModelForm):
             "consultation_fee",
             "is_available",
         ]
+
+
+
+class DoctorScheduleForm(forms.ModelForm):
+
+    class Meta:
+        model = DoctorSchedule
+
+        fields = [
+            "doctor",
+            "day_of_week",
+            "start_time",
+            "end_time",
+            "slot_duration",
+            "break_start",
+            "break_end",
+            "is_active",
+        ]
+
+        widgets = {
+            "doctor": forms.Select(attrs={
+                "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
+            }),
+
+            "day_of_week": forms.Select(attrs={
+                "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
+            }),
+
+            "start_time": forms.TimeInput(attrs={
+                "type": "time",
+                "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
+            }),
+
+            "end_time": forms.TimeInput(attrs={
+                "type": "time",
+                "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
+            }),
+
+            "slot_duration": forms.NumberInput(attrs={
+                "min": 1,
+                "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
+            }),
+
+            "break_start": forms.TimeInput(attrs={
+                "type": "time",
+                "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
+            }),
+
+            "break_end": forms.TimeInput(attrs={
+                "type": "time",
+                "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
+            }),
+
+            "is_active": forms.CheckboxInput(attrs={
+                "class": "rounded border-gray-300 text-teal-600"
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["doctor"].queryset = (
+            DoctorProfile.objects
+            .filter(user__is_active=True)
+            .select_related("user", "department")
+        )
