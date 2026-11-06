@@ -46,10 +46,14 @@ class DayOfWeek(models.TextChoices):
     TUESDAY = "TUESDAY", "Tuesday"
     WEDNESDAY = "WEDNESDAY", "Wednesday"
     THURSDAY = "THURSDAY", "Thursday"
-    FRIDAY = "FRIDAY", "Friday"
 
 
 class DoctorSchedule(models.Model):
+
+    class SlotDuration(models.IntegerChoices):
+        FIFTEEN = 15, "15 Minutes"
+        THIRTY = 30, "30 Minutes"
+        FORTY_FIVE = 45, "45 Minutes"
 
     doctor = models.ForeignKey(
         DoctorProfile,
@@ -66,13 +70,22 @@ class DoctorSchedule(models.Model):
 
     end_time = models.TimeField()
 
-    slot_duration = models.PositiveSmallIntegerField(default=15)
+    slot_duration = models.PositiveSmallIntegerField(
+        choices=SlotDuration.choices,
+        default=15
+    )
 
-    break_start = models.TimeField(null=True, blank=True)
+    break_start = models.TimeField(
+        null=True,
+        blank=True
+    )
 
-    break_end = models.TimeField(null=True, blank=True)
+    break_end = models.TimeField(
+        null=True,
+        blank=True
+    )
 
-    is_active = models.BooleanField(default=True)
+    is_available = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -80,6 +93,7 @@ class DoctorSchedule(models.Model):
 
     class Meta:
         ordering = ["day_of_week", "start_time"]
+
         constraints = [
             models.UniqueConstraint(
                 fields=["doctor", "day_of_week"],
@@ -87,26 +101,37 @@ class DoctorSchedule(models.Model):
             )
         ]
 
+        verbose_name = "Doctor Schedule"
+        verbose_name_plural = "Doctor Schedules"
+
     def clean(self):
         super().clean()
 
+        # Working Time Validation
         if self.start_time and self.end_time:
             if self.start_time >= self.end_time:
                 raise ValidationError({
                     "end_time": "End time must be after start time."
                 })
 
-        if self.slot_duration <= 0:
+        # Appointment Duration Validation
+        valid_durations = [
+            choice.value for choice in self.SlotDuration
+        ]
+
+        if self.slot_duration not in valid_durations:
             raise ValidationError({
-                "slot_duration": "Slot duration must be greater than zero."
+                "slot_duration": "Duration must be 15, 30 or 45 minutes."
             })
 
+        # Break Time Validation
         if bool(self.break_start) != bool(self.break_end):
             raise ValidationError(
                 "Both break start and break end must be provided."
             )
 
         if self.break_start and self.break_end:
+
             if self.break_start >= self.break_end:
                 raise ValidationError({
                     "break_end": "Break end must be after break start."
@@ -118,8 +143,11 @@ class DoctorSchedule(models.Model):
                     and self.break_end <= self.end_time
                 ):
                     raise ValidationError(
-                        "Break time must be within the doctor's schedule."
+                        "Break time must be within doctor's working hours."
                     )
 
     def __str__(self):
-        return f"{self.doctor.user.full_name} - {self.day_of_week}"
+        return (
+            f"{self.doctor.user.full_name} - "
+            f"{self.get_day_of_week_display()}"
+        )
