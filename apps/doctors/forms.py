@@ -128,7 +128,7 @@ class DoctorScheduleForm(forms.ModelForm):
             "slot_duration",
             "break_start",
             "break_end",
-            "is_active",
+            "is_available",
         ]
 
         widgets = {
@@ -164,7 +164,7 @@ class DoctorScheduleForm(forms.ModelForm):
                 "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
             }),
 
-            "is_active": forms.CheckboxInput(attrs={
+            "is_available": forms.CheckboxInput(attrs={
                 "class": "rounded border-gray-300 text-teal-600"
             }),
         }
