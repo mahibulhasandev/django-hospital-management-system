@@ -150,8 +150,7 @@ class DoctorScheduleForm(forms.ModelForm):
                 "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
             }),
 
-            "slot_duration": forms.NumberInput(attrs={
-                "min": 1,
+            "slot_duration": forms.Select(attrs={
                 "class": "w-full rounded-lg border border-gray-300 px-4 py-3"
             }),
 
@@ -168,6 +167,22 @@ class DoctorScheduleForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(attrs={
                 "class": "rounded border-gray-300 text-teal-600"
             }),
+        }
+
+        labels = {
+            "doctor": "Select Doctor",
+            "day_of_week": "Working Day",
+            "start_time": "Start Time",
+            "end_time": "End Time",
+            "slot_duration": "Appointment Duration",
+            "break_start": "Break Start",
+            "break_end": "Break End",
+            "is_active": "Available",
+        }
+
+        help_texts = {
+            "slot_duration": "Select 15, 30 or 45 minutes.",
+            "is_active": "Uncheck if the doctor is unavailable.",
         }
 
     def __init__(self, *args, **kwargs):
