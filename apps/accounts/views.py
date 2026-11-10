@@ -10,7 +10,9 @@ from django.core.exceptions import PermissionDenied
 from .forms import LoginForm, PatientRegistrationForm
 from django.db import transaction
 from .forms import StaffRegistrationForm
-from .models import StaffRegistrationRequest
+# from .models import StaffRegistrationRequest
+from .models import User, StaffRegistrationRequest
+
 
 def login_view(request):
     if request.user.is_authenticated:
