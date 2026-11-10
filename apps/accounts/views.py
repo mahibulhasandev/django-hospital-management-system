@@ -8,7 +8,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import LoginForm
 from django.core.exceptions import PermissionDenied
 from .forms import LoginForm, PatientRegistrationForm
-
+from django.db import transaction
+from .forms import StaffRegistrationForm
+from .models import StaffRegistrationRequest
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -95,3 +97,52 @@ def register_view(request):
         "accounts/register.html",
         {"form": form}
     )
+
+
+def staff_register_view(request):
+
+    if request.user.is_authenticated:
+        return redirect("accounts:dashboard")
+
+    if request.method == "POST":
+        form = StaffRegistrationForm(request.POST)
+
+        if form.is_valid():
+
+            with transaction.atomic():
+
+                user = form.save(commit=False)
+
+                user.role = User.Role.PATIENT
+                user.is_active = False
+
+                user.save()
+
+                StaffRegistrationRequest.objects.create(
+                    user=user,
+                    requested_role=form.cleaned_data["requested_role"],
+                    department=form.cleaned_data.get("department"),
+                    specialization=form.cleaned_data.get("specialization") or "",
+                    qualification=form.cleaned_data.get("qualification") or "",
+                    experience_years=form.cleaned_data.get("experience_years"),
+                    consultation_fee=form.cleaned_data.get("consultation_fee"),
+                )
+
+            messages.success(
+                request,
+                "Your registration request has been submitted. "
+                "Please wait for Hospital Admin approval."
+            )
+
+            return redirect("accounts:login")
+
+    else:
+        form = StaffRegistrationForm()
+
+    return render(
+        request,
+        "accounts/staff_register.html",
+        {"form": form}
+    )
+
+
