@@ -95,3 +95,79 @@ class PatientRegistrationForm(UserCreationForm):
             "placeholder": "Enter your phone number",
         }),
     }
+
+
+class StaffRegistrationForm(UserCreationForm):
+
+    requested_role = forms.ChoiceField(
+        choices=StaffRegistrationRequest.RequestedRole.choices,
+        label="Select Your Role"
+    )
+
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
+        required=False,
+        empty_label="Select Department"
+    )
+
+    specialization = forms.CharField(
+        max_length=150,
+        required=False
+    )
+
+    qualification = forms.CharField(
+        max_length=255,
+        required=False
+    )
+
+    experience_years = forms.IntegerField(
+        required=False,
+        min_value=0
+    )
+
+    consultation_fee = forms.DecimalField(
+        required=False,
+        max_digits=10,
+        decimal_places=2,
+        min_value=0
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            "full_name",
+            "email",
+            "phone",
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        email = cleaned_data.get("email")
+        phone = cleaned_data.get("phone")
+
+        if not email and not phone:
+            raise forms.ValidationError(
+                "Email or phone number is required."
+            )
+
+        role = cleaned_data.get("requested_role")
+
+        if role == StaffRegistrationRequest.RequestedRole.DOCTOR:
+
+            required_fields = (
+                "department",
+                "specialization",
+                "qualification",
+                "experience_years",
+                "consultation_fee",
+            )
+
+            for field in required_fields:
+                if not cleaned_data.get(field):
+                    self.add_error(
+                        field,
+                        "This field is required for Doctor registration."
+                    )
+
+        return cleaned_data
